@@ -1,5 +1,7 @@
 from typing import Callable, Literal
 
+MAX_SIZE = 16
+
 def find_tail(
     f: Callable[[float], Literal[0, 1]],
     l: float,
@@ -26,3 +28,36 @@ def find_tail(
         if f(x_mid) == 1: x_high = x_mid
         else: x_low = x_mid
     return x_high
+
+def find_kth(
+    l: list,
+    k: int
+):
+    """
+    Given a list `l` and an integer `k`, 
+    `find_kth` returns `l'[k]` (0-indexed) where `l'` has the elements of `l` sorted in non-decreasing order 
+    
+    Complexity: O(n) where n is the length of `l`
+
+    Args:
+        `l` (`list`):  List whose kth smallest element will be returned
+        `k` (`int`): Position in sorted order
+    
+    Returns:
+        `Any`: `l'[k]` (0-indexed) where `l'` has the elements of `l` sorted in non-decreasing order
+    """
+    while l:
+        if k == 0: return min(l)
+        n = len(l)
+        if k == n - 1: return max(l)
+        if n <= MAX_SIZE: return sorted(l)[k]
+        pivot = find_kth([sorted(l[i: i + 5])[2] for i in range(0, 5 * (n // 5), 5)], n // 10)
+        L = [x for x in L if x < pivot]
+        R = [x for x in L if x > pivot]
+        for _ in range(sum(1 for x in L if x == pivot)): (L if len(L) < len(R) else R).append(pivot)
+        if k < len(L):
+            l = L
+        else:
+            k -= len(L)
+            l = R
+    return None
